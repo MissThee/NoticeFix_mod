@@ -14,7 +14,10 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.media.midi.MidiDeviceInfo;
@@ -31,6 +34,7 @@ import com.xeasy.noticefix.bean.IconLibBean;
 import com.xeasy.noticefix.constant.MyConstant;
 import com.xeasy.noticefix.dao.GlobalConfigDao;
 import com.xeasy.noticefix.dao.IconFuncDao;
+import com.xeasy.noticefix.dao.IconLibDao;
 import com.xeasy.noticefix.utils.CommandUtil;
 import com.xeasy.noticefix.utils.ImageTools;
 import com.xeasy.noticefix.utils.ImageUtils;
@@ -297,7 +301,7 @@ public class SystemUIHooker implements IXposedHookLoadPackage {
 //                    , boolean.class
 //            );
 //        }
-        if ( null != setExpandedMethod ) {
+        if (null != setExpandedMethod) {
             XposedBridge.hookMethod(
                     setExpandedMethod
                     , new XC_MethodHook() {
@@ -338,7 +342,6 @@ public class SystemUIHooker implements IXposedHookLoadPackage {
         }
 
 
-
         // 测试 com.android.systemui.statusbar.policy.HeadsUpManager.HeadsUpEntry
 
         Method onAlertEntryAdded = ReflexUtil.findMethodIfParamExist(
@@ -346,7 +349,7 @@ public class SystemUIHooker implements IXposedHookLoadPackage {
                 , "onAlertEntryAdded"
                 , XposedHelpers.findClass("com.android.systemui.statusbar.AlertingNotificationManager.AlertEntry", classLoader)
         );
-        if ( null != onAlertEntryAdded ) {
+        if (null != onAlertEntryAdded) {
             XposedBridge.hookMethod(onAlertEntryAdded
                     , new XC_MethodHook() {
                         @Override
@@ -404,7 +407,7 @@ public class SystemUIHooker implements IXposedHookLoadPackage {
 
 
 //        Method methodsByExactParameters = XposedHelpers.findMethodBestMatch(clazz,  "setIcon", args2);
-        if ( methodsByExactParameters == null ) {
+        if (methodsByExactParameters == null) {
             XposedBridge.log(LOG_PREV + "hook -- setIcon 未找到");
             return;
         }
@@ -413,7 +416,7 @@ public class SystemUIHooker implements IXposedHookLoadPackage {
             protected void afterHookedMethod(MethodHookParam param) {
                 if (HookConstant.getGlobalConfigDao().read && HookConstant.globalConfigDao.showColoredIcons) {
                     for (Object arg : param.args) {
-                        if ( arg instanceof View) {
+                        if (arg instanceof View) {
                             View iconView = (View) arg;
                             @SuppressLint("DiscouragedApi")
                             int preLTag = AndroidAppHelper.currentApplication().getResources().getIdentifier("icon_is_pre_L", "id", "com.android.systemui");
@@ -720,8 +723,6 @@ public class SystemUIHooker implements IXposedHookLoadPackage {
     }
 
 
-
-
     public static void fixNotificationIcon(StatusBarNotification statusBarNotification, Context context) {
 
         try {
@@ -806,10 +807,29 @@ public class SystemUIHooker implements IXposedHookLoadPackage {
                     }
                     // 使用 app图标
                     if (iconFuncStatus.iconFuncId == IconFunc.ORIGIN_FIX.funcId) {
-                        PackageManager pm = context.getPackageManager();
+
+
                         // 获取app图标
+//                        PackageManager pm = context.getPackageManager();
+//                        Drawable appIconDrawable = pm.getApplicationIcon(pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA));
+//                        appIconDrawable.setColorFilter(Color.argb(255, 230, 240, 250), PorterDuff.Mode.DST_ATOP);
+//
+//                        Bitmap appIconBitmap = ImageUtils.buildScaledBitmap(appIconDrawable, 64, 64);
+//                        Bitmap appIconBitmapRound = ImageTools.toRoundCorner(appIconBitmap, 64);
+//                        Icon appIcon = Icon.createWithBitmap(appIconBitmapRound);
+// ----------------------------------
+                        Bitmap bg = Bitmap.createBitmap(64, 64, Bitmap.Config.ARGB_8888);
+                        bg.eraseColor(Color.argb(255, 230, 240, 250));
+                        Bitmap bgRound = ImageTools.toRoundCorner(bg, 64);
+                        Canvas canvas = new Canvas(bgRound);
+
+                        PackageManager pm = context.getPackageManager();
                         Drawable appIconDrawable = pm.getApplicationIcon(pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA));
-                        Icon appIcon = Icon.createWithBitmap(ImageTools.toBitmap(appIconDrawable));
+                        Bitmap appIconBitmap = ImageUtils.buildScaledBitmap(appIconDrawable, 64, 64);
+                        canvas.drawBitmap(appIconBitmap, 0, 0,  new Paint());
+                        canvas.save();
+
+                        Icon appIcon = Icon.createWithBitmap(bgRound);
                         // 反射赋值
                         ImageTools.setSmallIcon(appIcon, notification);
                         return;
