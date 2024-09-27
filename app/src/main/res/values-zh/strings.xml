@@ -40,6 +40,7 @@
     <string name="icon_func_color">解除原生安卓彩色图标限制</string>
     <string name="icon_func_lib">使用内置图标库替换通知图标</string>
     <string name="icon_func_auto">使用内置算法替换通知图标</string>
+    <string name="icon_func_origin">使用app图标替换通知图标</string>
     <string name="icon_func_custom">使用自定义替换通知图标</string>
     <string name="yes">是</string>
     <string name="no">否</string>

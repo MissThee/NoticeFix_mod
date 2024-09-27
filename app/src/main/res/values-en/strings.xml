@@ -40,6 +40,7 @@
     <string name="icon_func_color">Remove the limitation of Android color icons</string>
     <string name="icon_func_lib">Replace notification icons with icon library</string>
     <string name="icon_func_auto">Replace notification icons with auto</string>
+    <string name="icon_func_origin">Replace notification icons with app icons</string>
     <string name="icon_func_custom">Replace notification icons with custom icons</string>
     <string name="yes">yes</string>
     <string name="no">no</string>

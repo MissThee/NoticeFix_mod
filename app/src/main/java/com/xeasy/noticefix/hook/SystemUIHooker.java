@@ -10,6 +10,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -799,6 +800,16 @@ public class SystemUIHooker implements IXposedHookLoadPackage {
                             ImageTools.setSmallIcon(newIcon, notification);
                             return;
                         }
+                    }
+                    // 使用 app图标
+                    if (iconFuncStatus.iconFuncId == IconFunc.ORIGIN_FIX.funcId) {
+                        PackageManager pm = context.getPackageManager();
+                        // 获取app图标
+                        Drawable appIconDrawable = pm.getApplicationIcon(pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA));
+                        Icon appIcon = Icon.createWithBitmap(ImageTools.toBitmap(appIconDrawable));
+                        // 反射赋值
+                        ImageTools.setSmallIcon(appIcon, notification);
+                        return;
                     }
                 }
             }

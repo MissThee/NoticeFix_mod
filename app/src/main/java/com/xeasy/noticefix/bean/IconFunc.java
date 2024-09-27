@@ -9,7 +9,8 @@ public enum IconFunc {
 
     CUSTOM_FIX(0, R.string.icon_func_custom),
     LIB_FIX(1, R.string.icon_func_lib),
-    AUTO_FIX(2, R.string.icon_func_auto);
+    AUTO_FIX(2, R.string.icon_func_auto),
+    ORIGIN_FIX( 3,R.string.icon_func_origin);
 
     IconFunc(Integer funcId, Integer funcDesc){
         this.funcId = funcId;

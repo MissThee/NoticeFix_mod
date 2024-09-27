@@ -86,30 +86,25 @@ public class IconFuncDao {
             Map<String, ?> all = sharedPreferences.getAll();
             // 准备返回的数据
             iconFuncStatuses = new ArrayList<>();
-            if ( all == null || all.size() == 0) {
-                // 没有过 初始化
-                SharedPreferences.Editor edit = sharedPreferences.edit();
-                IconFunc[] values = IconFunc.values();
-                for (IconFunc value : values) {
-                    IconFuncStatus iconFuncStatus = new IconFuncStatus();
-                    iconFuncStatus.iconFuncId = value.funcId;
-                    iconFuncStatus.active = true;
-                    // 默认顺序
-                    iconFuncStatus.order = value.funcId;
-                    // 持久化
-                    edit.putString(value.funcId + "", gson.toJson(iconFuncStatus));
-                    // 发送刷新通知
-                    AppNotification.sendFlashNoticeMessage(context, null);
-                    iconFuncStatuses.add(iconFuncStatus);
+            all.forEach((key, value) -> iconFuncStatuses.add(gson.fromJson(value.toString(), IconFuncStatus.class)));
+            SharedPreferences.Editor edit = sharedPreferences.edit();
+            IconFunc[] values = IconFunc.values();
+            for (IconFunc value : values) {
+                if (all.containsKey(value.funcId + "")) {
+                    continue;
                 }
-                boolean commit = edit.commit();
-                if (! commit ) {
-                    Toast.makeText(context, "初始化配置信息错误", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                // 获取开关状态和排序状态
-                all.forEach((key, value) -> iconFuncStatuses.add(gson.fromJson(value.toString(), IconFuncStatus.class)));
-//                Toast.makeText(context, "读取配置信息成功", Toast.LENGTH_SHORT).show();
+                IconFuncStatus iconFuncStatus = new IconFuncStatus();
+                iconFuncStatus.iconFuncId = value.funcId;
+                iconFuncStatus.active = true;
+                // 默认顺序
+                iconFuncStatus.order = value.funcId;
+                // 持久化
+                edit.putString(value.funcId + "", gson.toJson(iconFuncStatus));
+                iconFuncStatuses.add(iconFuncStatus);
+            }
+            boolean commit = edit.commit();
+            if (!commit) {
+                Toast.makeText(context, "初始化配置信息错误", Toast.LENGTH_SHORT).show();
             }
         }
         Collections.sort(iconFuncStatuses);
