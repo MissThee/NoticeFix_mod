@@ -733,7 +733,10 @@ public class SystemUIHooker implements IXposedHookLoadPackage {
             // 是选择了不处理的app
             if (customIconBean != null && customIconBean.noHandle) {
                 // 判断是不是推送
-                String opPkg = statusBarNotification.getOpPkg();
+                String opPkg = null;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                    opPkg = statusBarNotification.getOpPkg();
+                }
                 boolean isProxy = !opPkg.equals(packageName);
                 // 但是 1 不是推送 直接g
                 if (!isProxy) {
