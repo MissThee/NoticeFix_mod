@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">NoticeFix</string>
+    <string name="app_name">NoticeFix_mod</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">NoticeFix</string>
+    <string name="first_fragment_label">NoticeFix_mod</string>
     <string name="second_fragment_label">Custom icon</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
@@ -57,7 +57,7 @@
     <string name="debug_mode_desc">(TestMode for Dev, Do not touch)</string>
     <string name="refresh_icon_library">Update Icon Library</string>
     <string name="library_url">https://x-easy.cn/noticefix/icon_lib</string>
-    <string name="app_about">NoticeFix by x-easy</string>
+    <string name="app_about">NoticeFix by x-easy, NoticeFix_mod by MissThee</string>
     <string name="handle_grayscale_icons_config">Does not handle grayscale icons</string>
     <string name="handle_grayscale_icons_config_desc">If notification icon is grayscale, do not convert</string>
     <string name="icon_preview">icon preview</string>
